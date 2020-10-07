@@ -1,7 +1,6 @@
 package com.grizzly.api.exception;
 
 import com.grizzly.api.exception.impl.APIAuthorizationException;
-import com.grizzly.api.exception.impl.APIRequestEmptyResultException;
 import com.grizzly.api.exception.impl.APIRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +24,9 @@ public class APIExceptionHandler {
      * @return the response of the improper request action
      */
     @ExceptionHandler(value = {APIRequestException.class})
-    public ResponseEntity<Object> handleAPIRequestException(APIRequestException e) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        APIException exception = new APIException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
+    public ResponseEntity<Object> handleAPIRequestException(final APIRequestException e) {
+        final HttpStatus status = HttpStatus.BAD_REQUEST;
+        final APIException exception = new APIException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
         return new ResponseEntity<>(exception, status);
     }
 
@@ -38,24 +37,11 @@ public class APIExceptionHandler {
      * @return the response of the unauthorized request
      */
     @ExceptionHandler(value = {APIAuthorizationException.class})
-    public ResponseEntity<Object> handleAPIAuthorizationException(APIAuthorizationException e) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        APIException exception = new APIException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
+    public ResponseEntity<Object> handleAPIAuthorizationException(final APIAuthorizationException e) {
+        final HttpStatus status = HttpStatus.UNAUTHORIZED;
+        final APIException exception = new APIException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
         return new ResponseEntity<>(exception, status);
     }
 
-    /**
-     * Exception Handler for {@link APIRequestEmptyResultException}
-     *      thrown when the client is requesting invalid data
-     *          i.e No found results in database.
-     * @param e
-     * @return the response of an empty result request
-     */
-    @ExceptionHandler(value = {APIRequestEmptyResultException.class})
-    public ResponseEntity<Object> handleAPIAuthorizationException(APIRequestEmptyResultException e) {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        APIException exception = new APIException(e.getMessage(), status, ZonedDateTime.now(ZoneId.of("Z")));
-        return new ResponseEntity<>(exception, status);
-    }
 
 }

@@ -3,7 +3,6 @@ package com.grizzly.api.dao;
 import com.grizzly.api.model.Account;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -19,21 +18,21 @@ public interface AccountDAO {
      * @param email
      * @param roleId
      */
-    void create(String username, String email, int roleId);
+    void create(final String username, final String email, final int roleId);
 
     /**
      * Retrieves the account within the specified UUID
      * @param uuid
      * @return the specified account object
      */
-    Optional<Account> get(UUID uuid);
+    Account get(UUID uuid);
 
     /**
      * Retrieves the account with the specified name
      * @param username
      * @return the specified account object
      */
-    Optional<Account> get(String username);
+    Account get(String username);
 
     /**
      * Retrieves a list of all accounts

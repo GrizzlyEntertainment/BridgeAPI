@@ -10,8 +10,8 @@ public class SQLUtils {
      * @param objects
      * @return the sql syntax formatted for the values in VALUES (value, value, value);
      */
-    public static String formatObjectsToValues(Object... objects) {
-        StringBuilder sql = new StringBuilder();
+    public static String formatObjectsToValues(final Object... objects) {
+        final StringBuilder sql = new StringBuilder();
 
         sql.append("VALUES (");
 
@@ -26,7 +26,6 @@ public class SQLUtils {
         }
 
         sql.append(");");
-        System.out.println(sql.toString());
         return sql.toString();
     }
 }

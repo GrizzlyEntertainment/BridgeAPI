@@ -33,7 +33,7 @@ public class AccountController {
      * @param account
      */
     @PostMapping
-    public void createAccount(@RequestBody Account account) {
+    public void createAccount(@RequestBody final Account account) {
         System.out.println("Incoming Create Account Request: " + account.toString());
         accountService.getAccountDAO().create(account.getUsername(), account.getEmail(), account.getRoleId());
     }
@@ -53,8 +53,8 @@ public class AccountController {
      * @return the selected account with the provided username
      */
     @GetMapping(path = "{username}")
-    public Account getAccount(@PathVariable("username") String username) {
-        return accountService.getAccountDAO().get(username).orElse(null);
+    public Account getAccount(@PathVariable("username") final String username) {
+        return accountService.getAccountDAO().get(username);
     }
 
 }

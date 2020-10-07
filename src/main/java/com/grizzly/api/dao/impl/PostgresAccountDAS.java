@@ -2,7 +2,6 @@ package com.grizzly.api.dao.impl;
 
 import com.grizzly.api.APIConfiguration;
 import com.grizzly.api.dao.AccountDAO;
-import com.grizzly.api.exception.impl.APIRequestEmptyResultException;
 import com.grizzly.api.model.Account;
 import com.grizzly.api.utilities.SQLUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class PostgresAccountDAS implements AccountDAO {
      * @param jdbcTemplate
      */
     @Autowired
-    public PostgresAccountDAS(JdbcTemplate jdbcTemplate) {
+    public PostgresAccountDAS(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -40,7 +39,7 @@ public class PostgresAccountDAS implements AccountDAO {
      * @param roleId
      */
     @Override
-    public void create(String username, String email, int roleId) {
+    public void create(final String username, final String email, final int roleId) {
         final StringBuilder sql = new StringBuilder();
         final String uuid = UUID.randomUUID().toString();
 
@@ -59,20 +58,11 @@ public class PostgresAccountDAS implements AccountDAO {
      * @return the specified account object
      */
     @Override
-    public Optional<Account> get(UUID uuid) {
+    public Account get(final UUID uuid) throws EmptyResultDataAccessException {
         final String sql = "SELECT * FROM accounts WHERE id= ?";
-        try {
-            Account account = jdbcTemplate.queryForObject(sql, new Object[] { uuid }, (resultSet, i) ->
-                    new Account(UUID.fromString(resultSet.getString("id")), resultSet.getString("username"), resultSet.getString("email"), resultSet.getInt("role_id")));
-
-            return Optional.ofNullable(account).or(() -> {
-                throw new APIRequestEmptyResultException(String.format("Account with the specified UUID=%s was not found.", uuid));
-
-            });
-
-        } catch (EmptyResultDataAccessException e) {
-            throw new APIRequestEmptyResultException(String.format("Account with the specified UUID=%s was not found.", uuid));
-        }
+        final Account account = jdbcTemplate.queryForObject(sql, new Object[] { uuid }, (resultSet, i)
+                -> new Account(UUID.fromString(resultSet.getString("id")), resultSet.getString("username"), resultSet.getString("email"), resultSet.getInt("role_id")));
+        return Optional.ofNullable(account).orElseThrow(() -> new EmptyResultDataAccessException(String.format("Account with the specified UUID `%s` was not found.", uuid), 1));
     }
 
     /**
@@ -82,19 +72,11 @@ public class PostgresAccountDAS implements AccountDAO {
      * @return the specified account object
      */
     @Override
-    public Optional<Account> get(String username) {
+    public Account get(final String username) throws EmptyResultDataAccessException {
         final String sql = "SELECT * FROM accounts WHERE username= ?";
-        try {
-            Account account = jdbcTemplate.queryForObject(sql, new Object[] { username }, (resultSet, i) ->
-                    new Account(UUID.fromString(resultSet.getString("id")), resultSet.getString("username"), resultSet.getString("email"), resultSet.getInt("role_id")));
-
-            return Optional.ofNullable(account).or(() -> {
-                throw new APIRequestEmptyResultException(String.format("Account with the specified username=%s was not found.", username));
-            });
-
-        } catch (EmptyResultDataAccessException e) {
-            throw new APIRequestEmptyResultException(String.format("Account with the specified username=%s was not found.", username));
-        }
+        final Account account = jdbcTemplate.queryForObject(sql, new Object[] { username }, (resultSet, i)
+                -> new Account(UUID.fromString(resultSet.getString("id")), resultSet.getString("username"), resultSet.getString("email"), resultSet.getInt("role_id")));
+        return Optional.ofNullable(account).orElseThrow(() -> new EmptyResultDataAccessException(String.format("Account with the specified username `%s` was not found.", username), 1));
     }
 
     /**

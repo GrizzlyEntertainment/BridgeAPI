@@ -10,7 +10,7 @@ public class APIRequestException extends RuntimeException {
      *
      * @param message
      */
-    public APIRequestException(String message) {
+    public APIRequestException(final String message) {
         super(message);
     }
 
@@ -19,7 +19,7 @@ public class APIRequestException extends RuntimeException {
      * @param message
      * @param cause
      */
-    public APIRequestException(String message, Throwable cause) {
+    public APIRequestException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
