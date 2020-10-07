@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * Represents the Account Model
  * Utilized for specifying which types we would wish to display for an account request service.
@@ -16,7 +18,7 @@ public class Account {
      * Represents the MySQL `Primary Index` key id that self registered to this account.
      */
     @JsonProperty("id")
-    private final long id;
+    private final UUID id;
 
     /**
      * Represents the username associated with this account

@@ -23,7 +23,7 @@ public class AccountService {
      * @param accountDAO
      */
     @Autowired
-    public AccountService(@Qualifier("FixedDAO") AccountDAO accountDAO) {
+    public AccountService(@Qualifier("Postgres") AccountDAO accountDAO) {
         this.accountDAO = accountDAO;
     }
 

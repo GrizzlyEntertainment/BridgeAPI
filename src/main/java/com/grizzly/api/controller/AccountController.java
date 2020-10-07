@@ -54,7 +54,7 @@ public class AccountController {
      */
     @GetMapping(path = "{username}")
     public Account getAccount(@PathVariable("username") String username) {
-        return accountService.getAccountDAO().get(username);
+        return accountService.getAccountDAO().get(username).orElse(null);
     }
 
 }
