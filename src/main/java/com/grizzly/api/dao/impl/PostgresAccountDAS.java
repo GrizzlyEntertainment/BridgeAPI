@@ -2,6 +2,7 @@ package com.grizzly.api.dao.impl;
 
 import com.grizzly.api.APIConfiguration;
 import com.grizzly.api.dao.AccountDAO;
+import com.grizzly.api.exception.impl.APIRequestEmptyResultException;
 import com.grizzly.api.model.Account;
 import com.grizzly.api.utilities.SQLUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,10 @@ public class PostgresAccountDAS implements AccountDAO {
      */
     @Override
     public void create(String username, String email, int roleId) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO accounts (id, username, email, role_id)");
-
+        final StringBuilder sql = new StringBuilder();
         final String uuid = UUID.randomUUID().toString();
-        sql.append(SQLUtils.formatObjectsToValues(uuid, username, email, roleId));
 
+        sql.append("INSERT INTO accounts (id, username, email, role_id) ").append(SQLUtils.formatObjectsToValues(uuid, username, email, roleId));
         jdbcTemplate.execute(sql.toString());
 
         if (APIConfiguration.DEBUG_MODE)
@@ -65,12 +64,15 @@ public class PostgresAccountDAS implements AccountDAO {
         try {
             Account account = jdbcTemplate.queryForObject(sql, new Object[] { uuid }, (resultSet, i) ->
                     new Account(UUID.fromString(resultSet.getString("id")), resultSet.getString("username"), resultSet.getString("email"), resultSet.getInt("role_id")));
-            return Optional.ofNullable(account);
+
+            return Optional.ofNullable(account).or(() -> {
+                throw new APIRequestEmptyResultException(String.format("Account with the specified UUID=%s was not found.", uuid));
+
+            });
+
         } catch (EmptyResultDataAccessException e) {
-            if (APIConfiguration.DEBUG_MODE)
-                e.printStackTrace();
+            throw new APIRequestEmptyResultException(String.format("Account with the specified UUID=%s was not found.", uuid));
         }
-        return Optional.empty();
     }
 
     /**
@@ -85,12 +87,14 @@ public class PostgresAccountDAS implements AccountDAO {
         try {
             Account account = jdbcTemplate.queryForObject(sql, new Object[] { username }, (resultSet, i) ->
                     new Account(UUID.fromString(resultSet.getString("id")), resultSet.getString("username"), resultSet.getString("email"), resultSet.getInt("role_id")));
-            return Optional.ofNullable(account);
+
+            return Optional.ofNullable(account).or(() -> {
+                throw new APIRequestEmptyResultException(String.format("Account with the specified username=%s was not found.", username));
+            });
+
         } catch (EmptyResultDataAccessException e) {
-            if (APIConfiguration.DEBUG_MODE)
-                e.printStackTrace();
+            throw new APIRequestEmptyResultException(String.format("Account with the specified username=%s was not found.", username));
         }
-        return Optional.empty();
     }
 
     /**
